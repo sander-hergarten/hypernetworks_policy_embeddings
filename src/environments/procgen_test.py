@@ -1,6 +1,6 @@
 # %%
 # Imports
-from procgen_envs import environment_dictionary_gym, environment_dictionary_tf
+from src.environments import procgen_envs
 import tensorflow as tf
 import numpy as np
 
@@ -18,14 +18,14 @@ import numpy as np
 
 
 def test_load_environments():
-    for env_name, env in environment_dictionary_gym.items():
+    for env_name, env in procgen_envs.environment_dictionary_gym.items():
         print(f"Testing {env_name}")
-        tf_env = environment_dictionary_tf[env_name]
+        tf_env = procgen_envs.environment_dictionary_tf[env_name]
 
         time_step = tf_env.reset()
         rewards = []
         steps = []
-        num_episodes = 5
+        num_episodes = 1
 
         for _ in range(num_episodes):
             episode_reward = 0
