@@ -30,11 +30,12 @@ def test_load_environments():
         for _ in range(num_episodes):
             episode_reward = 0
             episode_steps = 0
-            while not time_step.is_last():
-                action = tf.random.uniform([1], 0, 2, dtype=tf.int32)
-                time_step = tf_env.step(action)
-                episode_steps += 1
-                episode_reward += time_step.reward.numpy()
+
+            action = tf.random.uniform([1], 0, 2, dtype=tf.int32)
+            time_step = tf_env.step(action)
+            episode_steps += 1
+            episode_reward += time_step.reward.numpy()  # type: ignore
+
             rewards.append(episode_reward)
             steps.append(episode_steps)
             time_step = tf_env.reset()

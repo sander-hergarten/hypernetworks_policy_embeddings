@@ -2,6 +2,7 @@
 # Imports
 from src.replay_buffers import generate_buffer
 from src.environments import procgen_envs
+from tf_agents.policies import random_tf_policy
 
 # %%
 # Requirements
@@ -15,13 +16,17 @@ from src.environments import procgen_envs
 # Tests
 
 
-def test_DQNBufferGenerator():
-    generator = generate_buffer.DQNGenerator(
-        procgen_envs.environment_dictionary_tf["bigfish"],
-        num_training_steps=10
+def test_BufferGenerator():
+    policy = random_tf_policy.RandomTFPolicy(
+        time_step_spec=procgen_envs.spec.time_step_spec,
+        action_spec=procgen_envs.spec.action_spec,
     )
-    buffer = generator.generate_buffer(10)
+
+    data_spec = policy.collect_data_spec
+
+    generator = generate_buffer.BufferGenerator(
+        procgen_envs.environment_dictionary_tf["bigfish"],
+    )
+
+    buffer = generator.generate_buffer(10, policy=policy, data_spec=data_spec)
     assert buffer.num_frames() == 10
-
-
-# %%
