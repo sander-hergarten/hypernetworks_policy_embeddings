@@ -1,6 +1,6 @@
 # %%
 # Imports
-from src.environments import procgen_envs
+from src.environments import procgen_names, ProcgenEnvironment
 import tensorflow as tf
 import numpy as np
 
@@ -11,6 +11,7 @@ import numpy as np
         - Load completely
         - Have a observation_spec and action_spec
         - Run parallel 
+        - be accessable with the interface
 """
 
 # %%
@@ -18,9 +19,10 @@ import numpy as np
 
 
 def test_load_environments():
-    for env_name, env in procgen_envs.environment_dictionary_gym.items():
+    for env_name in procgen_names:
         print(f"Testing {env_name}")
-        tf_env = procgen_envs.environment_dictionary_tf[env_name]
+
+        tf_env = ProcgenEnvironment(env_name).to_tf_env() 
 
         time_step = tf_env.reset()
         rewards = []
@@ -48,4 +50,37 @@ def test_load_environments():
         print("avg_length", avg_length, "avg_reward:", avg_reward)
 
 
+def test_tracking_interface():
+    class TestTracker:
+        testing_rendering_env = False
+        rendering_env = True
+        def reset(self, **kwargs):
+            print(f"is and episode in progress:{kwargs['episode_in_progress']()}")
+
+            kwargs["switch_to_default_env" 
+                    if self.testing_rendering_env 
+                    else "switch_to_render_env"]()
+            
+            self.testing_rendering_env = not self.testing_rendering_env
+
+
+        def __call__(self, step_data, **kwargs):
+            assert self.testing_rendering_env == ("rgb" in step_data[-1].keys())
+    
+    
+    env = ProcgenEnvironment("coinrun")
+    tracker = TestTracker()
+
+    env.add_tracker(tracker)
+
+    env.reset()
+    env.step(0)
+    env.step(0)
+    env.step(0)
+    env.step(0)
+
+    env.reset()
+    env.step(0)
+    env.step(0)
+    env.step(0)
 # %%
