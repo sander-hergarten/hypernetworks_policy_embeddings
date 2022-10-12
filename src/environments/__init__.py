@@ -1,1 +1,1 @@
-from . import procgen_envs
+from .procgen_envs import ProcgenEnvironment, procgen_names
